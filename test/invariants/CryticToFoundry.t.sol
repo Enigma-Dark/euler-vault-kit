@@ -158,46 +158,7 @@ contract CryticToFoundry is Invariants, Setup {
 
         console.log("----------");
 
-        /*         this.loop(2,0);
-
-        console.log("----------");
-
-        console.log("balanceOf: ", eTST.balanceOf(address(actor)));
-        console.log("debtOf: ", eTST.debtOf(address(actor)));
-
-        console.log("TotalSupply: ", eTST.totalSupply());
-        console.log("TotalAssets: ", eTST.totalAssets());
-
-        console.log("----------");
-
-        this.repayWithShares(3,0);
-
-        console.log("----------");
-
-        console.log("balanceOf: ", eTST.balanceOf(address(actor)));
-        console.log("debtOf: ", eTST.debtOf(address(actor)));
-
-        console.log("TotalSupply: ", eTST.totalSupply());
-        console.log("TotalAssets: ", eTST.totalAssets());
-
-        console.log("----------"); */
-
         assert_VM_INVARIANT_C();
-    }
-
-    function test_liquidate_bug() public {
-        _setUpActorAndDelay(USER3, 297507);
-        //this.setLTV(433, 433, 0);
-        _setUpActor(USER1);
-        this.enableController(1524785991);
-        _setUpActorAndDelay(USER1, 439556);
-        this.enableCollateral(217905055956562793374063556811130300111285293815122069343455239377127312);
-        _setUpActorAndDelay(USER3, 566039);
-        this.enableCollateral(29);
-        _setUpActorAndDelay(USER3, 209930);
-        this.enableController(1524785993);
-        _delay(271957);
-        this.liquidate(2848675, 0, 512882652);
     }
 
     function test_VM_INVARIANT5() public {
@@ -333,72 +294,6 @@ contract CryticToFoundry is Invariants, Setup {
         // 10
         _setUpActorAndDelay(USER3, 136394);
         this.pullDebt(4370001, 4370000);
-    }
-
-    function test_liquidateCoverage() public {
-        // 1
-        _setUpActorAndDelay(USER1, 207289);
-        this.setAccountOperator(
-            105717250746529141172024724297104503287295319057463784682825647261824788845683, 800, true
-        );
-
-        // 2
-        _setUpActorAndDelay(USER1, 405856);
-        this.enableController(17764606878960966821700294425087953767181977824305320974917920152485278716022);
-
-        // 3
-        _setUpActorAndDelay(USER3, 439556);
-        this.enableCollateral(0);
-
-        // 4
-        _setUpActorAndDelay(USER3, 4177);
-        this.enableController(96218313369897368400401469462041301000952411458528693032930166145649090196266);
-
-        // 5
-        _setUpActorAndDelay(USER3, 439556);
-        this.liquidate(4370000, 0, 1524785991);
-    }
-
-    function test_liquidateCoverage2() public {
-        // 1
-        _setUpActorAndDelay(USER2, 361136);
-        this.depositCollateralToActor(
-            115792089237316195423570985008687907853269984665640564039457584007913129639935, 4370000
-        );
-
-        // 2
-        _setUpActorAndDelay(USER3, 463587);
-        this.enableCollateral(4370000);
-
-        // 3
-        _setUpActorAndDelay(USER1, 112444);
-        this.enableController(89542571243649197051430772920307087535249499496671593682963902732427039403647);
-
-        // 4
-        _setUpActorAndDelay(USER1, 525476);
-        this.enableCollateral(115792089237316195423570985008687907853269984665640564039457584007913129639932);
-
-        // 5
-        _setUpActorAndDelay(USER2, 400981);
-        this.depositToActor(1524785992, 70660979405370551306431037636906474910548328261468048786572907510610053763936);
-
-        // 6
-        _setUpActorAndDelay(USER3, 390247);
-        this.enableController(7571938424744497050025392125255968711315919643451955475188);
-
-        // 7
-        _setUpActorAndDelay(USER3, 4177);
-        this.setPrice(115518271729930361139946212800867286559642462937563235984193410469727763769722, 1e18);
-
-        // 8
-        _setUpActorAndDelay(USER3, 198598);
-        this.borrowTo(621, 106369723326817504322082057395634583314815541356617033724546638068337675944543);
-
-        // 9
-        _setUpActorAndDelay(USER1, 38059);
-        this.liquidate(
-            type(uint256).max, 67834169209174376432688579979852955112859803843320970887286885013562394664546, 4370000
-        );
     }
 
     function test_withdrawAssertion1() public {

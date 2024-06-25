@@ -36,10 +36,11 @@ contract EVaultExtended is EVault, FunctionOverrides {
         return vaultStorage.configFlags.isSet(bitMask);
     }
 
-    function initOperation(
-        uint32 operation,
-        address accountToCheck
-    ) internal override (Base, FunctionOverrides) returns (VaultCache memory vaultCache, address account) {
+    function initOperation(uint32 operation, address accountToCheck)
+        internal
+        override (Base, FunctionOverrides)
+        returns (VaultCache memory vaultCache, address account)
+    {
         return FunctionOverrides.initOperation(operation, accountToCheck);
     }
 
