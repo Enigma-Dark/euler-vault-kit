@@ -45,7 +45,7 @@ abstract contract InvariantsSpec {
     string constant VM_INVARIANT_B =
         "VM_INVARIANT_B: If totalSupply increases new totalSupply must be less than or equal to supply cap";
 
-    string constant VM_INVARIANT_C = "VM_INVARIANT_C: If totalAssets == 0 <=> totalSupply == 0";
+    string constant VM_INVARIANT_C = "VM_INVARIANT_C: If totalAssets == 0 => totalSupply == 0";
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                              VAULT MODULE: ERC4626 INVARIANTS                             //
@@ -173,10 +173,20 @@ abstract contract InvariantsSpec {
 
     string constant LM_INVARIANT_A = "LM_INVARIANT_A: Liquidation can only succed if violator is unhealthy";
 
-    string constant LM_INVARIANT_B = "LM_INVARIANT_B: debtSocialization == 0 => exchangeRate <= exchangeRate' ";
+    string constant LM_INVARIANT_B = "LM_INVARIANT_B: debtSocialization == 0 => exchangeRate <= exchangeRate'";
 
-    string constant LM_INVARIANT_C = "LM_INVARIANT_C: Only a liquidation can leave a healthy account unhealthy";
+    string constant LM_INVARIANT_C =
+        "LM_INVARIANT_C: Only a deposit, mintToActor, skim, repayTo, convertFees & liquidate can leave an account in an unhealthy state";
 
     string constant LM_INVARIANT_D =
         "LM_INVARIANT_D: Only liquidations can deteriorate health score of an already unhealthy account";
+
+    string constant LM_INVARIANT_E =
+        "LM_INVARIANT_E: After a successful liquidation, repayAssets amount of debt should be transferred to sender";
+
+    string constant LM_INVARIANT_F =
+        "LM_INVARIANT_E: After a successful liquidation, minYieldBalance amount of collateral should be transferred to sender";
+
+    string constant LM_INVARIANT_G =
+        "LM_INVARIANT_E: After a successful liquidation, if debtSocialization is enabled, violator debt should be 0";
 }

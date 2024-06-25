@@ -24,4 +24,9 @@ contract BaseHooks is ProtocolAssertions, InvariantsSpec {
     function _getHealthScore(uint256 liabilityValue, uint256 collateralValue) internal pure returns (uint256) {
         return liabilityValue == 0 ? 1e18 : collateralValue * 1e18 / liabilityValue;
     }
+
+    /// @notice Returns the actor or violator address if it has been set in the handler
+    function _getActorOrViolator() internal view returns (address) {
+        return (violatorTemp != address(0)) ? violatorTemp : address(actor);
+    }
 }

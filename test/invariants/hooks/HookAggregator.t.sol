@@ -14,6 +14,11 @@ abstract contract HookAggregator is VaultBeforeAfterHooks, BorrowingBeforeAfterH
         _borrowingHooksBefore();
     }
 
+    function _beforeLiquidation(address violator) internal {
+        violatorTemp = violator;
+        _before();
+    }
+
     /// @notice Modular hook selector, per module
     function _after() internal {
         _vaultHooksAfter();
@@ -21,6 +26,9 @@ abstract contract HookAggregator is VaultBeforeAfterHooks, BorrowingBeforeAfterH
 
         // Postconditions
         _checkPostConditions();
+
+        // Reset
+        violatorTemp = address(0);
     }
 
     /// @notice Postconditions for the handlers

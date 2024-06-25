@@ -101,4 +101,8 @@ abstract contract BaseStorage {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     address[] internal baseAssets;
+
+    address violatorTemp;
+
+    mapping(bytes4 => bool) internal uncheckedHealthOperations;
 }

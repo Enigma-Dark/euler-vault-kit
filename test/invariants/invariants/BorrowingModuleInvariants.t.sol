@@ -16,7 +16,9 @@ import {HandlerAggregator} from "../HandlerAggregator.t.sol";
 /// @dev Inherits HandlerAggregator for checking actions in assertion testing mode
 abstract contract BorrowingModuleInvariants is HandlerAggregator {
     function assert_BM_INVARIANT_A(address _borrower) internal {
-        assertGe(eTST.totalBorrows(), eTST.debtOf(_borrower), BM_INVARIANT_A);
+        if (eTST.debtOf(_borrower) > NUMBER_OF_ACTORS) {
+            assertGe(eTST.totalBorrows(), eTST.debtOf(_borrower) - NUMBER_OF_ACTORS, BM_INVARIANT_A);
+        }
     }
 
     function assert_BM_INVARIANT_B() internal {

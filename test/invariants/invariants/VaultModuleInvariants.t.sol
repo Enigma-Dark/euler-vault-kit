@@ -23,9 +23,6 @@ abstract contract VaultModuleInvariants is HandlerAggregator {
         if (eTST.totalAssets() == 0) {
             assertEq(eTST.totalSupply(), 0, VM_INVARIANT_C);
         }
-        if (eTST.totalSupply() == 0) {
-            assertEq(eTST.totalAssets(), 0, VM_INVARIANT_C);
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

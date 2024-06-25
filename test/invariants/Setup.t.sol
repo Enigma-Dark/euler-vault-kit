@@ -17,21 +17,13 @@ import {SequenceRegistry} from "../../src/SequenceRegistry/SequenceRegistry.sol"
 // Modules
 import {
     BalanceForwarderExtended,
-    BalanceForwarder,
     BorrowingExtended,
-    Borrowing,
     GovernanceExtended,
-    Governance,
     InitializeExtended,
-    Initialize,
     LiquidationExtended,
-    Liquidation,
     RiskManagerExtended,
-    RiskManager,
     TokenExtended,
-    Token,
-    VaultExtended,
-    Vault
+    VaultExtended
 } from "test/invariants/helpers/extended/ModulesExtended.sol";
 
 // Test Contracts
@@ -41,6 +33,10 @@ import {MockPriceOracle} from "../mocks/MockPriceOracle.sol";
 import {Actor} from "./utils/Actor.sol";
 import {BaseTest} from "./base/BaseTest.t.sol";
 import {EVaultExtended} from "./helpers/extended/EVaultExtended.sol";
+import {ILiquidationModuleHandler} from "./handlers/interfaces/ILiquidationModuleHandler.sol";
+import {IVaultModuleHandler} from "./handlers/interfaces/IVaultModuleHandler.sol";
+import {IGovernanceModuleHandler} from "./handlers/interfaces/IGovernanceModuleHandler.sol";
+import {IBorrowingModuleHandler} from "./handlers/interfaces/IBorrowingModuleHandler.sol";
 
 /// @title Setup
 /// @notice Setup contract for the invariant test Suite, inherited by Tester
@@ -61,19 +57,25 @@ contract Setup is BaseTest {
         feeReceiver = _makeAddr("feeReceiver");
         protocolConfig = new ProtocolConfig(address(this), feeReceiver);
 
-        // Deploy the oracle and integrations
-        balanceTracker = address(new MockBalanceTracker());
-        oracle = new MockPriceOracle();
-        sequenceRegistry = address(new SequenceRegistry());
-
         // Deploy the mock assets
         assetTST = new TestERC20();
         assetTST2 = new TestERC20();
         baseAssets.push(address(assetTST));
         baseAssets.push(address(assetTST2));
 
+        // Deploy the oracle and integrations
+        balanceTracker = address(new MockBalanceTracker());
+        oracle = new MockPriceOracle();
         unitOfAccount = address(1);
+
+        // Set initial prices for the simulation tokens
+        oracle.setPrice(address(assetTST), unitOfAccount, 1e18);
+        oracle.setPrice(address(assetTST2), unitOfAccount, 1e18);
+
+        sequenceRegistry = address(new SequenceRegistry());
         permit2 = DeployPermit2.deployPermit2();
+
+        _setUpOps();
     }
 
     function _deployVaults() internal {
@@ -82,14 +84,14 @@ contract Setup is BaseTest {
             Base.Integrations(address(evc), address(protocolConfig), sequenceRegistry, balanceTracker, permit2);
 
         Dispatch.DeployedModules memory modules = Dispatch.DeployedModules({
-            initialize: address(new Initialize(integrations)),
-            token: address(new Token(integrations)),
-            vault: address(new Vault(integrations)),
-            borrowing: address(new Borrowing(integrations)),
-            liquidation: address(new Liquidation(integrations)),
-            riskManager: address(new RiskManager(integrations)),
-            balanceForwarder: address(new BalanceForwarder(integrations)),
-            governance: address(new Governance(integrations))
+            initialize: address(new InitializeExtended(integrations)),
+            token: address(new TokenExtended(integrations)),
+            vault: address(new VaultExtended(integrations)),
+            borrowing: address(new BorrowingExtended(integrations)),
+            liquidation: address(new LiquidationExtended(integrations)),
+            riskManager: address(new RiskManagerExtended(integrations)),
+            balanceForwarder: address(new BalanceForwarderExtended(integrations)),
+            governance: address(new GovernanceExtended(integrations))
         });
 
         // Deploy the vault implementation
@@ -111,6 +113,9 @@ contract Setup is BaseTest {
         );
         eTST2.setInterestRateModel(address(new IRMTestDefault()));
         vaults.push(address(eTST2));
+
+        // Set default LTV
+        eTST.setLTV(address(eTST2), 1e4, 1e4, 0);
     }
 
     function _setUpActors() internal {
@@ -146,5 +151,19 @@ contract Setup is BaseTest {
         (success,) = address(_actor).call{value: INITIAL_ETH_BALANCE}("");
         assert(success);
         actorAddress = address(_actor);
+    }
+
+    /// @notice Set up the operations that can leave an account unhealthy without reverting
+    function _setUpOps() internal {
+        // Vault
+        uncheckedHealthOperations[IVaultModuleHandler.depositToActor.selector] = true;
+        uncheckedHealthOperations[IVaultModuleHandler.mintToActor.selector] = true;
+        uncheckedHealthOperations[IVaultModuleHandler.skim.selector] = true;
+        // Borrowing
+        uncheckedHealthOperations[IBorrowingModuleHandler.repayTo.selector] = true;
+        // Governance
+        uncheckedHealthOperations[IGovernanceModuleHandler.convertFees.selector] = true;
+        // Liquidation
+        uncheckedHealthOperations[ILiquidationModuleHandler.liquidate.selector] = true;
     }
 }

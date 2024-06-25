@@ -36,16 +36,16 @@ contract GovernanceModuleHandler is BaseHandler {
         }
     }
 
-    function setLTV(uint256 i, uint16 borrowLTV, uint16 liquidationLTV, uint24 rampDuration) external {
-        address collateral = _getRandomBaseAsset(i);
+    function setLTV(uint16 borrowLTV, uint16 liquidationLTV, uint24 rampDuration) external {
+        address collateral = address(eTST2);
 
         eTST.setLTV(collateral, borrowLTV, liquidationLTV, rampDuration);
 
         assert(true);
     }
 
-    function clearLTV(uint256 i) external {
-        address collateral = _getRandomBaseAsset(i);
+    function clearLTV() external {
+        address collateral = address(eTST2);
 
         eTST.clearLTV(collateral);
 

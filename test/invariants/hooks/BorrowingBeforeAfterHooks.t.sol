@@ -12,6 +12,8 @@ import {Pretty, Strings} from "../utils/Pretty.sol";
 import {BaseHooks} from "../base/BaseHooks.t.sol";
 import {ILiquidationModuleHandler} from "../handlers/interfaces/ILiquidationModuleHandler.sol";
 
+import "forge-std/console.sol";
+
 /// @title Borrowing Before After Hooks
 /// @notice Helper contract for before and after hooks
 /// @dev This contract is inherited by handlers
@@ -66,7 +68,7 @@ abstract contract BorrowingBeforeAfterHooks is BaseHooks {
         borrowingVars.controllerEnabledBefore = evc.isControllerEnabled(address(actor), address(eTST));
         // Liquidity
         (borrowingVars.collateralValueBefore, borrowingVars.liabilityValueBefore) =
-            _getAccountLiquidity(address(actor), false);
+            _getAccountLiquidity(_getActorOrViolator(), false);
         // Caps
         (, uint16 _borrowCap) = eTST.caps();
         borrowingVars.borrowCapBefore = AmountCap.wrap(_borrowCap).resolve();
@@ -86,7 +88,7 @@ abstract contract BorrowingBeforeAfterHooks is BaseHooks {
         borrowingVars.controllerEnabledAfter = evc.isControllerEnabled(address(actor), address(eTST));
         // Liquidity
         (borrowingVars.collateralValueAfter, borrowingVars.liabilityValueAfter) =
-            _getAccountLiquidity(address(actor), false);
+            _getAccountLiquidity(_getActorOrViolator(), false);
         // Caps
         (, uint16 _borrowCap) = eTST.caps();
         borrowingVars.borrowCapAfter = AmountCap.wrap(_borrowCap).resolve();
@@ -116,10 +118,8 @@ abstract contract BorrowingBeforeAfterHooks is BaseHooks {
     }
 
     function assert_LM_INVARIANT_C() internal {
-        if (isAccountHealthy(borrowingVars.liabilityValueBefore, borrowingVars.collateralValueBefore)) {
-            if (!isAccountHealthy(borrowingVars.liabilityValueAfter, borrowingVars.collateralValueAfter)) {
-                assertEq(bytes32(msg.sig), bytes32(ILiquidationModuleHandler.liquidate.selector), LM_INVARIANT_C);
-            }
+        if (!isAccountHealthy(borrowingVars.liabilityValueAfter, borrowingVars.collateralValueAfter)) {
+            assertTrue(uncheckedHealthOperations[msg.sig], LM_INVARIANT_C);
         }
     }
 
