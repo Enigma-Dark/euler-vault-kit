@@ -6,6 +6,31 @@ pragma solidity ^0.8.19;
 /// @dev Contains pseudo code and description for the invariants in the protocol
 /// @dev Invariants for Token, Vault, Borrowing, Liquidations mechanics
 abstract contract InvariantsSpec {
+    /*/////////////////////////////////////////////////////////////////////////////////////////////
+    //                                      PROPERTY TYPES                                       //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// @dev On this invariant testing framework there exists two types of Properties:
+
+    - INVARIANTS (INV): 
+        - These are properties that should always hold true in the system. 
+        - They are implemented under /invariants folder.
+
+    - POSTCONDITIONS:
+        - These are properties that should hold true after an action is executed.
+        - They are implemented under /hooks and /handlers.
+
+        - There exists two types of POSTCONDITIONS:
+            - GLOBAL POSTCONDITIONS (GPOST): 
+                - These are properties that should always hold true after an action is executed.
+                - They are checked in `_checkPostConditions` function in the HookAggregator contract.
+                
+            - HANDLER SPECIFIC POSTCONDITIONS (HSPOST): 
+    //          - These are properties that should hold true after an specific action is executed in a specific context.
+                - They are implemented on each handler function under HANDLER SPECIFIC POSTCONDITIONS comment.
+
+    /////////////////////////////////////////////////////////////////////////////////////////////*/
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                          BASE                                             //
     ///////////////////////////////////////////////////////////////////////////////////////////////
