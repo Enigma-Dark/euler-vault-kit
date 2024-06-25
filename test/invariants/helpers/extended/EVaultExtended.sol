@@ -38,7 +38,7 @@ contract EVaultExtended is EVault, FunctionOverrides {
 
     function initOperation(
         uint32 operation,
-        address accountToCheck //TODO add internal checks
+        address accountToCheck
     ) internal override (Base, FunctionOverrides) returns (VaultCache memory vaultCache, address account) {
         return FunctionOverrides.initOperation(operation, accountToCheck);
     }
