@@ -46,11 +46,23 @@ forge test
 ./test/scripts/coverage.sh
 ```
 
-### invariants tests (`/tests/invariants`)
+## Invariant Testing Suite
+
+This project has been set up with a suite of tests that check for specific invariants and properties for the evk, implemented by [vnmrtz.eth](https://twitter.com/vn_martinez_) from [Enigma Dark](https://www.enigmadark.com/). These tests are located in the `test/invariants` directory. They are written in Solidity and are designed to be run with the [echidna](https://github.com/crytic/echidna) fuzzing tool.
+
+Installation and usage of these tools is outside the scope of this README, but you can find more information in the respective repositories:
+- [Echidna Installation](https://github.com/crytic/echidna)
+
+To run invariant tests with Echidna:
+
 ```sh
-./test/scripts/echidna.sh # property mode
-./test/scripts/echidna-assert.sh # assertion mode
-./test/scripts/medusa.sh 
+./test/scripts/echidna.sh  
+```
+
+To run assert tests with Echidna:
+
+```sh
+./test/scripts/echidna-assert.sh  
 ```
 
 ## Safety

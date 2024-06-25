@@ -10,7 +10,7 @@ abstract contract InvariantsSpec {
     //                                      PROPERTY TYPES                                       //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// @dev On this invariant testing framework there exists two types of Properties:
+    /// On this invariant testing framework there exists two types of Properties:
 
     - INVARIANTS (INV): 
         - These are properties that should always hold true in the system. 
