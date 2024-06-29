@@ -62,6 +62,11 @@ contract BaseHandler is HookAggregator {
         return baseAssets[randomValue % baseAssets.length];
     }
 
+    function _getRandomVault(uint256 i) internal view returns (address) {
+        uint256 randomValue = _randomize(i, "randomVault");
+        return vaults[randomValue % vaults.length];
+    }
+
     /// @notice Helper function to randomize a uint256 seed with a string salt
     function _randomize(uint256 seed, string memory salt) internal pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(seed, salt)));

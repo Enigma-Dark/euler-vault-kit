@@ -9,7 +9,7 @@ import {Actor} from "../../utils/Actor.sol";
 import {BaseHandler} from "../../base/BaseHandler.t.sol";
 
 // Interfaces
-import {IERC4626} from "../../../../src/EVault/IEVault.sol";
+import {IERC4626, IVault} from "../../../../src/EVault/IEVault.sol";
 
 /// @title VaultModuleHandler
 /// @notice Handler test contract for the generic ERC4626 vault actions
@@ -19,35 +19,8 @@ contract VaultModuleHandler is BaseHandler {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //                                           ACTIONS                                         //
+    //                                     DEPOSITOR ACTIONS                                     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*     function deposit(uint256 assets, address receiver) external setup {
-        bool success;
-        bytes memory returnData;
-
-        address target = address(eTST);
-
-        uint256 previewedShares = eTST.previewDeposit(assets);
-
-        _approve(address(eTST.asset()), actor, target, assets);
-
-        _before();
-        (success, returnData) =
-            actor.proxy(target, abi.encodeWithSelector(IERC4626.deposit.selector, assets, receiver));
-
-        if (success) {
-            _after();
-
-            uint256 shares = abi.decode(returnData, (uint256));
-
-            _increaseGhostAssets(assets, address(receiver));
-            _increaseGhostShares(shares, address(receiver));
-
-            /// @dev ERC4626_DEPOSIT_INVARIANT_B
-            assertLe(previewedShares, shares, ERC4626_DEPOSIT_INVARIANT_B);
-        }
-    } */
 
     function depositToActor(uint256 assets, uint256 i) external setup {
         bool success;
@@ -75,31 +48,6 @@ contract VaultModuleHandler is BaseHandler {
             assertLe(previewedShares, shares, ERC4626_DEPOSIT_INVARIANT_B);
         }
     }
-
-    /*     function mint(uint256 shares, address receiver) external setup {
-        bool success;
-        bytes memory returnData;
-
-        address target = address(eTST);
-
-        uint256 previewedAssets = eTST.previewMint(shares);
-
-        _before();
-        (success, returnData) =
-            actor.proxy(target, abi.encodeWithSelector(IERC4626.mint.selector, shares, receiver));
-
-        if (success) {
-            _after();
-
-            uint256 assets = abi.decode(returnData, (uint256));
-
-            _increaseGhostAssets(assets, address(receiver));
-            _increaseGhostShares(shares, address(receiver));
-
-            /// @dev ERC4626_MINT_INVARIANT_B
-            assertGe(previewedAssets, assets, ERC4626_MINT_INVARIANT_B);
-        }
-    } */
 
     function mintToActor(uint256 shares, uint256 i) external setup {
         bool success;
@@ -175,6 +123,92 @@ contract VaultModuleHandler is BaseHandler {
 
             /// @dev ERC4626_REDEEM_INVARIANT_B
             assertLe(previewedAssets, assets, ERC4626_REDEEM_INVARIANT_B);
+        }
+    }
+
+    function skim(uint256 assets, uint256 i) external setup {
+        bool success;
+        bytes memory returnData;
+
+        address target = address(eTST);
+
+        // Get one of the three actors randomly
+        address receiver = _getRandomActor(i);
+
+        _before();
+        (success, returnData) = actor.proxy(target, abi.encodeWithSelector(IVault.skim.selector, assets, receiver));
+
+        if (success) {
+            _after();
+
+            uint256 shares = abi.decode(returnData, (uint256));
+
+            _increaseGhostAssets(assets, address(receiver));
+            _increaseGhostShares(shares, address(receiver));
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     COLLATERAL ACTIONS                                    //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    function depositCollateralToActor(uint256 assets, uint256 i) external setup {
+        bool success;
+        bytes memory returnData;
+
+        // Get one of the three actors randomly
+        address receiver = _getRandomActor(i);
+
+        address target = address(eTST2);
+
+        (success, returnData) = actor.proxy(target, abi.encodeWithSelector(IERC4626.deposit.selector, assets, receiver));
+
+        if (success) {
+            assert(true);
+        }
+    }
+
+    function mintCollateralToActor(uint256 shares, uint256 i) external setup {
+        bool success;
+        bytes memory returnData;
+
+        // Get one of the three actors randomly
+        address receiver = _getRandomActor(i);
+
+        address target = address(eTST2);
+
+        (success, returnData) = actor.proxy(target, abi.encodeWithSelector(IERC4626.mint.selector, shares, receiver));
+
+        if (success) {
+            assert(true);
+        }
+    }
+
+    function withdrawCollateral(uint256 assets, address receiver) external setup {
+        bool success;
+        bytes memory returnData;
+
+        address target = address(eTST2);
+
+        (success, returnData) =
+            actor.proxy(target, abi.encodeWithSelector(IERC4626.withdraw.selector, assets, receiver, address(actor)));
+
+        if (success) {
+            assert(true);
+        }
+    }
+
+    function redeemCollateral(uint256 shares, address receiver) external setup {
+        bool success;
+        bytes memory returnData;
+
+        address target = address(eTST2);
+
+        (success, returnData) =
+            actor.proxy(target, abi.encodeWithSelector(IERC4626.redeem.selector, shares, receiver, address(actor)));
+
+        if (success) {
+            assert(true);
         }
     }
 

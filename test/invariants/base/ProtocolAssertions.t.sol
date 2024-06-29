@@ -10,7 +10,10 @@ import {StdAsserts} from "../utils/StdAsserts.sol";
 abstract contract ProtocolAssertions is StdAsserts, BaseTest {
     /// @notice Returns true if an account is healthy (liability <= collateral)
     function isAccountHealthy(uint256 _liability, uint256 _collateral) internal pure returns (bool) {
-        return _liability <= _collateral;
+        if (_collateral == 0 && _liability == 0) {
+            return true;
+        }
+        return _liability < _collateral;
     }
 
     /// @notice Checks whether the account is healthy from a BORROWING perspective

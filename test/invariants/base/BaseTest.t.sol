@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 // Libraries
 import {Vm} from "forge-std/Base.sol";
 import {StdUtils} from "forge-std/StdUtils.sol";
+import "forge-std/console.sol";
 
 // Utils
 import {Actor} from "../utils/Actor.sol";
@@ -17,7 +18,7 @@ import {BaseStorage} from "./BaseStorage.t.sol";
 /// @dev Provides setup modifier and cheat code setup
 /// @dev inherits Storage, Testing constants assertions and utils needed for testing
 abstract contract BaseTest is BaseStorage, PropertiesConstants, StdAsserts, StdUtils {
-    bool public IS_TEST = true;
+    bool internal IS_TEST = true;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //                                   ACTOR PROXY MECHANISM                                   //
@@ -28,6 +29,7 @@ abstract contract BaseTest is BaseStorage, PropertiesConstants, StdAsserts, StdU
         actor = actors[msg.sender];
         _;
         actor = Actor(payable(address(0)));
+        violatorTemp = address(0);
     }
 
     /// @dev Solves medusa backward time warp issue
